@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/39890c71-8056-4aab-a81f-ffdfc24ad932/resourceGroups/DefaultResourceGroup-EUS/providers/Microsoft.Web/sites/graphite",
+    "appService.deploySubpath": "."
+}

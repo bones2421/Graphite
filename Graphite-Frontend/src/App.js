@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 
+const animations = ['bounce', 'slide', 'fade'];
+
 const App = () => {
   const [animation, setAnimation] = useState('');
-
-  const animations = ['bounce', 'slide', 'fade'];
 
   useEffect(() => {
     const randomIndex = Math.floor(Math.random() * animations.length);
@@ -19,4 +19,5 @@ const App = () => {
 };
 
 export default App;
+
 

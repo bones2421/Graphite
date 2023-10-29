@@ -1,2 +1,2 @@
 # Graphite
-Music Sharing Web App
+A beautiful soundscape made just for you.

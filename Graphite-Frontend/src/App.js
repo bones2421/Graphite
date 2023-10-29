@@ -13,7 +13,7 @@ const App = () => {
 
   return (
     <div className={`App ${animation}`}>
-      <h1>Hello, world:</h1>
+      <h1>Hello, world!!!</h1>
     </div>
   );
 };

@@ -4,6 +4,12 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+// Define the Spotify Web Playback SDK callback here
+window.onSpotifyWebPlaybackSDKReady = () => {
+  // The SDK is ready to be used
+  console.log("Spotify SDK ready");
+};
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>

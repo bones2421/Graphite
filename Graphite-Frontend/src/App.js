@@ -47,7 +47,8 @@ const App = () => {
   useEffect(() => {
     if (window.player || !token) return;  // Ensure player isn't re-initialized on every token change
 
-    window.onSpotifyWebPlaybackSDKReady = () => {
+    // Check if the SDK is ready to be used
+    if (window.Spotify && window.Spotify.Player) {
       const player = new window.Spotify.Player({
         name: 'Your Spotify Player',
         getOAuthToken: cb => { cb(token); }
@@ -64,7 +65,7 @@ const App = () => {
       });
 
       player.connect();
-    };
+    }
   }, [token]);
 
   return (

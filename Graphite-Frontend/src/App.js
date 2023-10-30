@@ -5,12 +5,11 @@ const App = () => {
   const [token, setToken] = useState(null);
   const [refreshToken, setRefreshToken] = useState(null);
   const [tokenExpiry, setTokenExpiry] = useState(null);
+  const [player, setPlayer] = useState(null);
   const [error, setError] = useState(null);
   const [playerReady, setPlayerReady] = useState(false);
-  const [player, setPlayer] = useState(null);
-  const [playing, setPlaying] = useState(false);
-  const [track, setTrack] = useState(null);
 
+  // Fetching the Spotify token
   useEffect(() => {
     async function fetchToken() {
       try {
@@ -27,6 +26,7 @@ const App = () => {
     fetchToken();
   }, []);
 
+  // Handling token expiry and refreshing it
   useEffect(() => {
     if (tokenExpiry) {
       const timer = setTimeout(() => {
@@ -47,8 +47,9 @@ const App = () => {
     }
   }, [tokenExpiry, refreshToken]);
 
+  // Initialize Spotify Player when token is fetched
   useEffect(() => {
-    if (window.player || !token) return; 
+    if (window.player || !token) return;
 
     if (window.Spotify && window.Spotify.Player) {
       const spotifyPlayer = new window.Spotify.Player({
@@ -58,13 +59,8 @@ const App = () => {
 
       spotifyPlayer.addListener('ready', ({ device_id }) => {
         console.log('Ready with Device ID', device_id);
-        setPlayer(spotifyPlayer);
         setPlayerReady(true);
-      });
-
-      spotifyPlayer.addListener('player_state_changed', state => {
-        setPlaying(!state.paused);
-        setTrack(state.track_window.current_track);
+        setPlayer(spotifyPlayer);
       });
 
       spotifyPlayer.addListener('initialization_error', ({ message }) => {
@@ -76,28 +72,22 @@ const App = () => {
     }
   }, [token]);
 
-  const handlePlayPause = () => {
+  const playSampleTrack = () => {
     if (!player) return;
-    if (playing) {
-      player.pause();
-    } else {
-      player.play();
-    }
+
+    player.togglePlay().then(() => {
+      console.log('Toggled playback!');
+    });
   };
 
   return (
     <div>
       <h1>Spotify Web Playback SDK Example</h1>
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      {playerReady && (
-        <div>
-          <p>Player is connected and ready!</p>
-          {track && <p>Playing: {track.name} by {track.artists[0].name}</p>}
-          <button onClick={handlePlayPause}>
-            {playing ? 'Pause' : 'Play'}
-          </button>
-        </div>
-      )}
+      {playerReady && <div>
+        <p>Player is connected and ready!</p>
+        <button onClick={playSampleTrack}>Play/Pause Sample Track</button>
+      </div>}
     </div>
   );
 };

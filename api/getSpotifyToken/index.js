@@ -38,11 +38,12 @@ export default async function (context, req) {
       body: response.data
     };
   } catch (error) {
+    context.log('Error fetching token:', error.response ? error.response.data : error.message);
     context.res = {
       status: 500,
-      body: `Error fetching Spotify token: ${error.message}`
+      body: `Error fetching Spotify token: ${error.response ? error.response.data : error.message}`
     };
-  }
+  }  
 };
 
 

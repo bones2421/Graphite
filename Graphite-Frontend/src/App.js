@@ -56,7 +56,7 @@ const App = () => {
 
   return (
     <div>
-      <h1>Simple Spotify Player</h1>
+     
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {playerReady ? (
         <div>
@@ -65,7 +65,7 @@ const App = () => {
           <button onClick={handleNext}>Next</button>
         </div>
       ) : (
-        <p>Loading...</p>
+       
       )}
     </div>
   );

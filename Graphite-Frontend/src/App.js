@@ -5,11 +5,12 @@ const App = () => {
   const [token, setToken] = useState(null);
   const [refreshToken, setRefreshToken] = useState(null);
   const [tokenExpiry, setTokenExpiry] = useState(null);
-  const [player, setPlayer] = useState(null);
   const [error, setError] = useState(null);
   const [playerReady, setPlayerReady] = useState(false);
+  const [player, setPlayer] = useState(null);
+  const [playing, setPlaying] = useState(false);
+  const [track, setTrack] = useState(null);
 
-  // Fetching the Spotify token
   useEffect(() => {
     async function fetchToken() {
       try {
@@ -26,7 +27,6 @@ const App = () => {
     fetchToken();
   }, []);
 
-  // Handling token expiry and refreshing it
   useEffect(() => {
     if (tokenExpiry) {
       const timer = setTimeout(() => {
@@ -47,7 +47,6 @@ const App = () => {
     }
   }, [tokenExpiry, refreshToken]);
 
-  // Initialize Spotify Player when token is fetched
   useEffect(() => {
     if (window.player || !token) return;
 
@@ -72,22 +71,40 @@ const App = () => {
     }
   }, [token]);
 
-  const playSampleTrack = () => {
-    if (!player) return;
+  useEffect(() => {
+    if (player) {
+      player.addListener('player_state_changed', state => {
+        setPlaying(!state.paused);
+        setTrack(state.track_window.current_track);
+      });
+    }
+  }, [player]);
 
-    player.togglePlay().then(() => {
-      console.log('Toggled playback!');
-    });
+  const togglePlay = () => {
+    if (playing) {
+      player.pause();
+    } else {
+      player.resume();
+    }
+    setPlaying(!playing);
   };
 
   return (
     <div>
       <h1>Spotify Web Playback SDK Example</h1>
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      {playerReady && <div>
-        <p>Player is connected and ready!</p>
-        <button onClick={playSampleTrack}>Play/Pause Sample Track</button>
-      </div>}
+      {playerReady && (
+        <div>
+          <p>Player is connected and ready!</p>
+          <button onClick={togglePlay}>{playing ? "Pause" : "Play"}</button>
+          {track && (
+            <div>
+              <img src={track.album.images[0].url} alt="Album cover" width="100" />
+              <p>{track.name} by {track.artists.map(artist => artist.name).join(', ')}</p>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

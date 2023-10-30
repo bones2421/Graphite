@@ -1,49 +1,59 @@
-.App {
+/* App.css */
+
+/* General styling for the whole app */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #121212;
+  color: #ffffff;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  margin: 0;
+}
+
+h1 {
   font-size: 2rem;
-  transition: all 1s ease-in-out;
+  margin-bottom: 20px;
+  color: #1DB954;  /* Spotify green color */
 }
 
-.bounce {
-  animation: bounce 2s infinite;
+/* Error messages */
+p[color='red'] {
+  color: #e74c3c;  /* A shade of red for error messages */
+  background-color: rgba(231, 76, 60, 0.1);  /* Light red background */
+  padding: 10px;
+  border-radius: 5px;
 }
 
-.slide {
-  animation: slide 2s infinite;
+/* Spotify player UI components */
+.player-container {
+  background-color: #282828;  /* Slight gray for contrast */
+  padding: 20px;
+  border-radius: 10px;
+  width: 70%;
+  max-width: 800px;  /* Maximum width of player */
 }
 
-.fade {
-  animation: fade 2s infinite;
+.button {
+  background-color: #1DB954;  /* Spotify green */
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
-@keyframes bounce {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-30px);
-  }
+.button:hover {
+  background-color: #1ed760;  /* Slightly brighter green for hover effect */
 }
 
-@keyframes slide {
-  0%, 100% {
-    transform: translateX(0);
-  }
-  50% {
-    transform: translateX(30px);
-  }
+.album-art {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 5px;
+  margin-right: 10px;
 }
 
-@keyframes fade {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
 

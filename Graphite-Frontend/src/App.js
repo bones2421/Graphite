@@ -11,7 +11,7 @@ const App = () => {
   useEffect(() => {
     async function fetchToken() {
       try {
-        const { data } = await axios.get("https://www.graphitesoundscape.com/callback");
+        const { data } = await axios.get("https://getspotifytoken.azurewebsites.net");
         setToken(data.access_token);
         setRefreshToken(data.refresh_token);
         setTokenExpiry(Date.now() + data.expires_in * 1000);
@@ -29,7 +29,7 @@ const App = () => {
       const timer = setTimeout(() => {
         async function refreshTokenFunc() {
           try {
-            const { data } = await axios.get(`https://www.graphitesoundscape.com/callback?refresh_token=${refreshToken}`);
+            const { data } = await axios.get(`https://getspotifytoken.azurewebsites.net?refresh_token=${refreshToken}`);
             setToken(data.access_token);
             setTokenExpiry(Date.now() + data.expires_in * 1000);
           } catch (error) {

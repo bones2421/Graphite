@@ -7,6 +7,9 @@ const App = () => {
   const [tokenExpiry, setTokenExpiry] = useState(null);
   const [error, setError] = useState(null);
   const [playerReady, setPlayerReady] = useState(false);
+  const [player, setPlayer] = useState(null);
+  const [playing, setPlaying] = useState(false);
+  const [track, setTrack] = useState(null);
 
   useEffect(() => {
     async function fetchToken() {
@@ -45,39 +48,62 @@ const App = () => {
   }, [tokenExpiry, refreshToken]);
 
   useEffect(() => {
-    if (window.player || !token) return;  // Ensure player isn't re-initialized on every token change
+    if (window.player || !token) return; 
 
-    // Check if the SDK is ready to be used
     if (window.Spotify && window.Spotify.Player) {
-      const player = new window.Spotify.Player({
+      const spotifyPlayer = new window.Spotify.Player({
         name: 'Your Spotify Player',
         getOAuthToken: cb => { cb(token); }
       });
 
-      player.addListener('ready', ({ device_id }) => {
+      spotifyPlayer.addListener('ready', ({ device_id }) => {
         console.log('Ready with Device ID', device_id);
+        setPlayer(spotifyPlayer);
         setPlayerReady(true);
       });
 
-      player.addListener('initialization_error', ({ message }) => {
+      spotifyPlayer.addListener('player_state_changed', state => {
+        setPlaying(!state.paused);
+        setTrack(state.track_window.current_track);
+      });
+
+      spotifyPlayer.addListener('initialization_error', ({ message }) => {
         console.error(message);
         setError('Failed to initialize Spotify player.');
       });
 
-      player.connect();
+      spotifyPlayer.connect();
     }
   }, [token]);
+
+  const handlePlayPause = () => {
+    if (!player) return;
+    if (playing) {
+      player.pause();
+    } else {
+      player.play();
+    }
+  };
 
   return (
     <div>
       <h1>Spotify Web Playback SDK Example</h1>
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      {playerReady && <p>Player is connected and ready!</p>}
+      {playerReady && (
+        <div>
+          <p>Player is connected and ready!</p>
+          {track && <p>Playing: {track.name} by {track.artists[0].name}</p>}
+          <button onClick={handlePlayPause}>
+            {playing ? 'Pause' : 'Play'}
+          </button>
+        </div>
+      )}
     </div>
   );
 };
 
 export default App;
+
 
 
 

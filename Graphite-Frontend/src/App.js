@@ -14,7 +14,6 @@ const App = () => {
         const { data } = await axios.get("https://getspotifytoken.azurewebsites.net/api/getSpotifyToken");
         setToken(data.access_token);
         setRefreshToken(data.refresh_token);
-        // Setting the expiry time for the access token
         setTokenExpiry(Date.now() + data.expires_in * 1000);
       } catch (error) {
         console.error('Error fetching token:', error);
@@ -27,7 +26,6 @@ const App = () => {
 
   useEffect(() => {
     if (tokenExpiry) {
-      // Refresh the token 1 minute before it's due to expire
       const timer = setTimeout(() => {
         async function refreshTokenFunc() {
           try {
@@ -42,12 +40,12 @@ const App = () => {
         refreshTokenFunc();
       }, tokenExpiry - Date.now() - 60000);
 
-      return () => clearTimeout(timer);  // Clear the timer when the component is unmounted or if tokenExpiry changes
+      return () => clearTimeout(timer);
     }
   }, [tokenExpiry, refreshToken]);
 
   useEffect(() => {
-    if (!token) return;
+    if (window.player || !token) return;  // Ensure player isn't re-initialized on every token change
 
     window.onSpotifyWebPlaybackSDKReady = () => {
       const player = new window.Spotify.Player({
@@ -55,13 +53,11 @@ const App = () => {
         getOAuthToken: cb => { cb(token); }
       });
 
-      // Listener: Check if player is ready
       player.addListener('ready', ({ device_id }) => {
         console.log('Ready with Device ID', device_id);
         setPlayerReady(true);
       });
 
-      // Listener: Handle player connection errors
       player.addListener('initialization_error', ({ message }) => {
         console.error(message);
         setError('Failed to initialize Spotify player.');
@@ -81,6 +77,7 @@ const App = () => {
 };
 
 export default App;
+
 
 
 

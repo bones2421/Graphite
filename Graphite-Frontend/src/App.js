@@ -65,7 +65,7 @@ const App = () => {
           <button onClick={handleNext}>Next</button>
         </div>
       ) : (
-       
+        <p></p>
       )}
     </div>
   );

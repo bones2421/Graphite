@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import './App.css';
 
 const App = () => {
   const [token, setToken] = useState(null);
@@ -56,21 +57,13 @@ const App = () => {
 
   return (
     <div>
-     
+      <button onClick={handlePlay}>Play/Pause</button>
+      <button onClick={handlePrev}>Previous</button>
+      <button onClick={handleNext}>Next</button>
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      {playerReady ? (
-        <div>
-          <button onClick={handlePlay}>Play/Pause</button>
-          <button onClick={handlePrev}>Previous</button>
-          <button onClick={handleNext}>Next</button>
-        </div>
-      ) : (
-        <p></p>
-      )}
     </div>
-  );
+);
 };
-
 export default App;
 
 

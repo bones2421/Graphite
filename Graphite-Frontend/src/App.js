@@ -3,21 +3,15 @@ import axios from 'axios';
 
 const App = () => {
   const [token, setToken] = useState(null);
-  const [refreshToken, setRefreshToken] = useState(null);
-  const [tokenExpiry, setTokenExpiry] = useState(null);
   const [error, setError] = useState(null);
   const [playerReady, setPlayerReady] = useState(false);
   const [player, setPlayer] = useState(null);
-  const [playing, setPlaying] = useState(false);
-  const [track, setTrack] = useState(null);
 
   useEffect(() => {
     async function fetchToken() {
       try {
         const { data } = await axios.get("https://getspotifytoken.azurewebsites.net");
         setToken(data.access_token);
-        setRefreshToken(data.refresh_token);
-        setTokenExpiry(Date.now() + data.expires_in * 1000);
       } catch (error) {
         console.error('Error fetching token:', error);
         setError('Failed to fetch Spotify token. Please refresh the page or try again later.');
@@ -28,89 +22,56 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    if (tokenExpiry) {
-      const timer = setTimeout(() => {
-        async function refreshTokenFunc() {
-          try {
-            const { data } = await axios.get(`https://getspotifytoken.azurewebsites.net?refresh_token=${refreshToken}`);
-            setToken(data.access_token);
-            setTokenExpiry(Date.now() + data.expires_in * 1000);
-          } catch (error) {
-            console.error('Error refreshing token:', error);
-            setError('Failed to refresh Spotify token.');
-          }
-        }
-        refreshTokenFunc();
-      }, tokenExpiry - Date.now() - 60000);
+    if (!token) return;
 
-      return () => clearTimeout(timer);
-    }
-  }, [tokenExpiry, refreshToken]);
+    const spotifyPlayer = new window.Spotify.Player({
+      name: 'Simple Spotify Player',
+      getOAuthToken: cb => { cb(token); }
+    });
 
-  useEffect(() => {
-    if (window.player || !token) return;
+    spotifyPlayer.addListener('ready', ({ device_id }) => {
+      console.log('Ready with Device ID', device_id);
+      setPlayerReady(true);
+      setPlayer(spotifyPlayer);
+    });
 
-    if (window.Spotify && window.Spotify.Player) {
-      const spotifyPlayer = new window.Spotify.Player({
-        name: 'Your Spotify Player',
-        getOAuthToken: cb => { cb(token); }
-      });
+    spotifyPlayer.connect();
 
-      spotifyPlayer.addListener('ready', ({ device_id }) => {
-        console.log('Ready with Device ID', device_id);
-        setPlayerReady(true);
-        setPlayer(spotifyPlayer);
-      });
-
-      spotifyPlayer.addListener('initialization_error', ({ message }) => {
-        console.error(message);
-        setError('Failed to initialize Spotify player.');
-      });
-
-      spotifyPlayer.connect();
-    }
+    return () => {
+      spotifyPlayer.disconnect();
+    };
   }, [token]);
 
-  useEffect(() => {
-    if (player) {
-      player.addListener('player_state_changed', state => {
-        setPlaying(!state.paused);
-        setTrack(state.track_window.current_track);
-      });
-    }
-  }, [player]);
+  const handlePlay = () => {
+    if (player) player.togglePlay();
+  };
 
-  const togglePlay = () => {
-    if (playing) {
-      player.pause();
-    } else {
-      player.resume();
-    }
-    setPlaying(!playing);
+  const handleNext = () => {
+    if (player) player.nextTrack();
+  };
+
+  const handlePrev = () => {
+    if (player) player.previousTrack();
   };
 
   return (
     <div>
-      <h1>Spotify Web Playback SDK Example!!!!</h1>
+      <h1>Simple Spotify Player</h1>
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      {playerReady && (
+      {playerReady ? (
         <div>
-          <p>Player is connected and ready!</p>
-          <button onClick={togglePlay}>{playing ? "Pause" : "Play"}</button>
-          {track && (
-            <div>
-              <img src={track.album.images[0].url} alt="Album cover" width="100" />
-              <p>{track.name} by {track.artists.map(artist => artist.name).join(', ')}</p>
-            </div>
-          )}
+          <button onClick={handlePlay}>Play/Pause</button>
+          <button onClick={handlePrev}>Previous</button>
+          <button onClick={handleNext}>Next</button>
         </div>
+      ) : (
+        <p>Loading...</p>
       )}
     </div>
   );
 };
 
 export default App;
-
 
 
 

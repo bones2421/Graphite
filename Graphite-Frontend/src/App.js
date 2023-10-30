@@ -91,7 +91,7 @@ const App = () => {
 
   return (
     <div>
-      <h1>Spotify Web Playback SDK Example</h1>
+      <h1>Spotify Web Playback SDK Example!!!!</h1>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {playerReady && (
         <div>

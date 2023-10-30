@@ -11,7 +11,7 @@ const App = () => {
   useEffect(() => {
     async function fetchToken() {
       try {
-        const { data } = await axios.get("https://graphite-function.azurewebsites.net/api/getSpotifyToken");
+        const { data } = await axios.get("https://getspotifytoken.azurewebsites.net/api/getSpotifyToken");
         setToken(data.access_token);
         setRefreshToken(data.refresh_token);
         // Setting the expiry time for the access token
@@ -31,7 +31,7 @@ const App = () => {
       const timer = setTimeout(() => {
         async function refreshTokenFunc() {
           try {
-            const { data } = await axios.get(`https://graphite-function.azurewebsites.net/api/getSpotifyToken?refresh_token=${refreshToken}`);
+            const { data } = await axios.get(`https://getspotifytoken.azurewebsites.net/api/getSpotifyToken?refresh_token=${refreshToken}`);
             setToken(data.access_token);
             setTokenExpiry(Date.now() + data.expires_in * 1000);
           } catch (error) {

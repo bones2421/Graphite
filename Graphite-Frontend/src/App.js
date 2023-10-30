@@ -5,7 +5,6 @@ import './App.css';
 const App = () => {
   const [token, setToken] = useState(null);
   const [error, setError] = useState(null);
-  const [playerReady, setPlayerReady] = useState(false);
   const [player, setPlayer] = useState(null);
 
   useEffect(() => {

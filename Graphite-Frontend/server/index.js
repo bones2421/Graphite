@@ -49,7 +49,7 @@ app.get('/auth/callback', (req, res) => {
     url: 'https://accounts.spotify.com/api/token',
     form: {
       code: code,
-      redirect_uri: spotify_redirect_uri,
+      redirect_uri: "http://localhost:3000/auth/callback",
       grant_type: 'authorization_code'
     },
     headers: {
@@ -75,3 +75,5 @@ app.get('/auth/token', (req, res) => {
 app.listen(port, () => {
   console.log(`Listening at http://localhost:${port}`)
 })
+
+app.use(express.static(path.join(__dirname, '../build')));

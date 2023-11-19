@@ -1,7 +1,7 @@
-const axios = require('axios');
-const qs = require('querystring');
+import { post } from 'axios';
+import { stringify } from 'querystring';
 
-module.exports = async function (context, req) {
+export default async function (context, req) {
   let tokenEndpointData;
 
   if (req.query.code) {
@@ -28,7 +28,7 @@ module.exports = async function (context, req) {
   }
 
   try {
-    const response = await axios.post('https://accounts.spotify.com/api/token', qs.stringify(tokenEndpointData), {
+    const response = await post('https://accounts.spotify.com/api/token', stringify(tokenEndpointData), {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       }
